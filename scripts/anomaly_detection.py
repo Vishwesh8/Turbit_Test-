@@ -1,13 +1,15 @@
 from scripts.utilities import *
 
 """Loading saved model"""
+current_directory = os.getcwd()
+root_directory = os.path.dirname(current_directory)
 new_model = tf.keras.models.load_model(
-    "models\LSTM_model_3_layers_multi_features.keras"
+    os.path.join(root_directory, "models", "LSTM_model_3_layers_multi_feature.keras")
 )
 
 """extracting and transforming data into usable format"""
-t1_df = data_load_and_clean("Turbine1.csv")
-t2_df = data_load_and_clean("Turbine2.csv")
+t1_df = data_load_and_clean(os.path.join(root_directory, "Turbine1.csv"))
+t2_df = data_load_and_clean(os.path.join(root_directory, "Turbine2.csv"))
 
 """Dimensionality reduction using PCA"""
 t2_df_rel = dimensionality_reduction(

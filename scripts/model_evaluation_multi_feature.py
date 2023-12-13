@@ -1,13 +1,15 @@
 from scripts.utilities import *
 
 """Loading saved model"""
+current_directory = os.getcwd()
+root_directory = os.path.dirname(current_directory)
 new_model = tf.keras.models.load_model(
-    "models\LSTM_model_2_layers_multi_features.keras"
+    os.path.join(root_directory, "models", "LSTM_model_3_layers_multi_feature.keras")
 )
 
 """extracting and transforming data into usable format"""
-t1_df = data_load_and_clean("Turbine1.csv")
-t2_df = data_load_and_clean("Turbine2.csv")
+t1_df = data_load_and_clean(os.path.join(root_directory, "Turbine1.csv"))
+t2_df = data_load_and_clean(os.path.join(root_directory, "Turbine2.csv"))
 
 """Dimensionality reduction using PCA"""
 t2_df = dimensionality_reduction(
@@ -32,18 +34,16 @@ t2_inputs, t2_labels = prepare_data(
 )
 
 """Standardising data"""
-t2_inputs = (t2_inputs - t2_inputs.mean()) / t2_inputs.std()
-t2_labels = (t2_labels - t2_labels.mean()) / t2_labels.std()
+std_t2_inputs = (t2_inputs - t2_inputs.mean()) / t2_inputs.std()
+std_t2_labels = (t2_labels - t2_labels.mean()) / t2_labels.std()
 
 """Evaluating model performance"""
-new_model.evaluate(x=t2_inputs, y=t2_labels, return_dict=True)
+new_model.evaluate(x=std_t2_inputs, y=std_t2_labels, return_dict=True)
 
 """To visualize predictions"""
 
-"""
-plot_acf(t1_df["Leistung(kW)"], lags=500, alpha=0.05)
-
-predicted = new_model.predict(t2_inputs, batch_size=4096)
+std_predicted = new_model.predict(std_t2_inputs, batch_size=4096)
+predicted = t2_labels.mean() + std_predicted * t2_labels.std()
 
 sns.lineplot(
     x=[i for i in range(predicted.shape[0])],
@@ -61,8 +61,7 @@ sns.lineplot(
 plt.legend()
 
 # Set plot labels and title
-plt.xlabel("time_steps")
-plt.ylabel("value")
-plt.title("Comparison")
+plt.xlabel("time_steps (10 minute interval)")
+plt.ylabel("Leistung(kW)")
+plt.title("Comparison Between Forecasted and Actual Values (Multi-feature input)")
 plt.show()
-"""

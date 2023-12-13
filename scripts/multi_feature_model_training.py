@@ -1,7 +1,9 @@
 from scripts.utilities import *
 
 """extracting and transforming data into usable format"""
-t1_df = data_load_and_clean("Turbine1.csv")
+current_directory = os.getcwd()
+root_directory = os.path.dirname(current_directory)
+t1_df = data_load_and_clean(os.path.join(root_directory, "Turbine1.csv"))
 
 """Converting datetime to day of the year and time of the day"""
 t1_df = convert_datetime(t1_df, "Dat/Zeit()")
@@ -85,7 +87,9 @@ history, trained_model = model_training(
     es_patience=100,
 )
 
-trained_model.save("models\LSTM_model_2_layers_multi_features.keras")
+trained_model.save(
+    os.path.join(root_directory, "models", "LSTM_model_3_layers_multi_feature.keras")
+)
 
 """evaluating model performance"""
 

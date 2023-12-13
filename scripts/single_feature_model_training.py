@@ -1,7 +1,9 @@
 from scripts.utilities import *
 
 """extracting and transforming data into usable format"""
-t1_df = data_load_and_clean("Turbine1.csv")
+current_directory = os.getcwd()
+root_directory = os.path.dirname(current_directory)
+t1_df = data_load_and_clean(os.path.join(root_directory, "Turbine1.csv"))
 
 """Preparing windows in the data and shuffling windows before splitting the data"""
 window_size = 36
@@ -48,7 +50,9 @@ history, trained_model = model_training(
     es_patience=100,
 )
 
-trained_model.save("models\LSTM_model_3_layers.keras")
+trained_model.save(
+    os.path.join(root_directory, "models", "LSTM_model_2_layers_single_feature.keras")
+)
 
 """evaluating model performance"""
 

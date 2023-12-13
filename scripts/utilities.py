@@ -6,6 +6,8 @@ import math
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import LabelEncoder
 import matplotlib.pyplot as plt
+import seaborn as sns
+import os
 
 
 def data_load_and_clean(filename):
@@ -106,9 +108,8 @@ def modelling(window_size, prediction_steps, number_of_features, optimizer, loss
     inputs = tf.keras.Input(shape=(window_size, number_of_features))
     x = layers.LSTM(64, activation="relu", return_sequences=True)(inputs)
     # x = layers.LSTM(64, activation="relu")(inputs)
-    # x = layers.LSTM(32, activation="relu", return_sequences=True)(x)
-    # x = layers.LSTM(16, activation="relu", return_sequences=True)(x)
-    x = layers.LSTM(32, activation="relu")(x)
+    x = layers.LSTM(32, activation="relu", return_sequences=True)(x)
+    x = layers.LSTM(16, activation="relu")(x)
     outputs = layers.Dense(prediction_steps)(x)
     model = tf.keras.Model(inputs=inputs, outputs=outputs)
     model.compile(optimizer, loss)
@@ -151,7 +152,6 @@ def convert_datetime(df, column):
 
 
 def dimensionality_reduction(df, n_components, column_names):
-    df = (df - df.mean()) / df.std()
     pca = PCA(n_components=n_components)
     pca.fit(df[column_names])
     data_pca = pca.transform(df[column_names])
